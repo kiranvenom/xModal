@@ -1,33 +1,41 @@
-import { useState, useRef } from 'react';
+import React, { useState, useRef, FormEvent, MouseEvent } from 'react';
 
-const App = () => {
-	const [modalOpen, setModalOpen] = useState(false);
-	const usernameRef = useRef(null);
-	const emailRef = useRef(null);
-	const phoneRef = useRef(null);
-	const dobRef = useRef(null);
-	const formRef = useRef(null);
+interface Props {}
+
+const App: React.FC<Props> = () => {
+	const [modalOpen, setModalOpen] = useState<boolean>(false);
+	const usernameRef = useRef<HTMLInputElement>(null);
+	const emailRef = useRef<HTMLInputElement>(null);
+	const phoneRef = useRef<HTMLInputElement>(null);
+	const dobRef = useRef<HTMLInputElement>(null);
+	const formRef = useRef<HTMLDivElement>(null);
 
 	const handleOpenModal = () => {
 		setModalOpen(true);
 	};
 
-	const handleOutsideClick = (e) => {
-		if (formRef.current && !formRef.current.contains(e.target)) {
+	const handleOutsideClick = (e: MouseEvent<HTMLDivElement>) => {
+		if (formRef.current && !formRef.current.contains(e.target as Node)) {
 			setModalOpen(false);
 		}
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+
+		if (
+			!usernameRef.current ||
+			!emailRef.current ||
+			!phoneRef.current ||
+			!dobRef.current
+		) {
+			return;
+		}
+
 		const username = usernameRef.current.value;
 		const email = emailRef.current.value;
 		const phone = phoneRef.current.value;
 		const dob = dobRef.current.value;
-
-		// if (!username || !email || !phone || !dob) {
-		//   alert("Please fill in all fields.");
-		//   return;
-		// }
 
 		if (!email.includes('@')) {
 			alert('Invalid email');
@@ -46,8 +54,6 @@ const App = () => {
 			return;
 		}
 
-		e.preventDefault();
-		// If all validations pass, you can perform further actions here
 		setModalOpen(false);
 	};
 
@@ -88,10 +94,7 @@ const App = () => {
 							/>
 							<label htmlFor='dob'>Date of Birth:</label>
 							<input type='date' id='dob' ref={dobRef} required />
-							<button
-								type='submit'
-								className='submit-button'
-								onClick={handleSubmit}>
+							<button type='submit' className='submit-button'>
 								Submit
 							</button>
 						</form>
